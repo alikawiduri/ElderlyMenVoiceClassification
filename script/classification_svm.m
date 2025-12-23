@@ -33,10 +33,26 @@ svmModel = fitcsvm( ...
 %% Prediksi
 Y_pred = predict(svmModel, X_test_pca);
 
-%% Evaluasi
-figure;
+%% Evaluasi & SIMPAN CONFUSION MATRIX
+fig = figure('Visible','off');
 confusionchart(Y_test, Y_pred);
 title('Confusion Matrix - SVM (Final Model)');
 
+exportgraphics(fig, ...
+    fullfile('result','confusion_matrix_svm.png'), ...
+    'Resolution',300);
+close(fig);
+
 accuracy = mean(Y_pred == Y_test);
 fprintf('Final SVM Accuracy: %.2f %%\n', accuracy*100);
+
+%% Simpan model dan parameter preprocessing
+model.svmModel = svmModel;
+model.mu       = mu;
+model.sigma    = sigma;
+model.coeff    = coeff(:,1:k);
+model.k        = k;
+
+save('result/svm_final_model.mat','model');
+
+disp('Model SVM final & confusion matrix berhasil disimpan di result/');
